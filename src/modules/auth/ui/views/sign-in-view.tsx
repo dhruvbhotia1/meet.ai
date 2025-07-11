@@ -48,7 +48,7 @@ const SignInView = () => {
             email: data.email,
             password: data.password
         }, {
-            onError: ({error}) => {setError(error.error.message);
+            onError: ({error}) => {setError(error?.message || "An unknown error occurred");
                 setPending(false)},
             onSuccess: () => {
                 setPending(false);
@@ -69,7 +69,7 @@ const SignInView = () => {
             }, {
                 onError: ({error}) => {
                     setPending(false);
-                    setError(error.message);
+                    setError(error?.message);
                 },
                 onSuccess: () => {
                     setPending(false);
