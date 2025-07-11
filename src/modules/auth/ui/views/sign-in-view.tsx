@@ -2,7 +2,6 @@
 import React, {useState} from 'react';
 import {Card} from "@/components/ui/card";
 import {CardContent} from "@/components/ui/card";
-import Image from "next/image";
 import {z} from 'zod';
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Input} from "@/components/ui/input";
@@ -17,6 +16,7 @@ import {useForm} from "react-hook-form";
 import Link from "next/link";
 import {authClient} from "@/lib/auth-client";
 import {useRouter} from "next/navigation";
+import {FaGithub, FaGoogle} from "react-icons/fa";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -151,11 +151,13 @@ const SignInView = () => {
 
                                 <div className={'grid grid-cols-2 gap-4'}>
                                     <Button onClick={() => signInWithSocial("google")} disabled={pending} variant={'outline'} type={'button'} className={'w-full'}>
+                                        <FaGoogle className={'h-4 w-4'}/>
                                         Google
                                     </Button>
 
                                     <Button onClick={() => signInWithSocial("github")} disabled={pending} variant={'outline'} type={'button'} className={'w-full'}>
-                                        GitHub
+                                        <FaGithub className={'h-4 w-4'}/>
+                                        Github
                                     </Button>
                                 </div>
 

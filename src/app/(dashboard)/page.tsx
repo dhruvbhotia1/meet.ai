@@ -1,4 +1,3 @@
-
 import React from 'react';
 import HomeView from "@/modules/home/ui/views/home-view";
 import {auth} from "@/lib/auth";
