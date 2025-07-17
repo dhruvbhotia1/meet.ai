@@ -5,6 +5,7 @@ import {HydrationBoundary, dehydrate} from "@tanstack/react-query";
 import {AgentsViewLoading} from "@/modules/agents/ui/views/agents-view";
 import {Suspense} from "react";
 import {ErrorBoundary} from "react-error-boundary";
+import AgentsListHeader from "@/modules/agents/ui/components/agents-list-header";
 
 const Page = async () => {
 
@@ -14,14 +15,17 @@ const Page = async () => {
 
 
     return (
-        <HydrationBoundary state={dehydrate(queryClient)}>
-            <Suspense fallback={<AgentsViewLoading />}>
-                <ErrorBoundary fallback={<AgentsViewError/>}>
-                    <AgentsView />
-                </ErrorBoundary>
-            </Suspense>
+        <>
+            <AgentsListHeader></AgentsListHeader>
+            <HydrationBoundary state={dehydrate(queryClient)}>
+                <Suspense fallback={<AgentsViewLoading />}>
+                    <ErrorBoundary fallback={<AgentsViewError/>}>
+                        <AgentsView />
+                    </ErrorBoundary>
+                </Suspense>
 
-        </HydrationBoundary>
+            </HydrationBoundary>
+        </>
     );
 };
 
