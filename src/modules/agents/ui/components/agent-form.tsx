@@ -18,12 +18,14 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import {Textarea} from "@/components/ui/textarea";
+import {toast} from "sonner";
 
 interface AgentFormProps {
 
     onSuccess?: () => void;
     onCancel?: () => void;
-    initialValues? : AgentGetOne;
+    initialValues? : AgentGetOne; // if we are editing an agent, and we have initial values, we pass the type from types.ts file.
+
 }
 
 
@@ -31,25 +33,31 @@ export const AgentForm = ({
     onSuccess, onCancel, initialValues
 }: AgentFormProps) => {
 
-    const trpc = useTRPC();
+    const trpc = useTRPC(); // this is a custom hook that we created in the client.ts file, it will return the trpc object which we can use to call the procedures defined in the server.ts file.
     const router = useRouter();
     const queryClient = useQueryClient();
 
     const createAgent = useMutation(
 
-        trpc.agents.create.mutationOptions({
-            onSuccess: () => {
-                queryClient.invalidateQueries(
-                    trpc.agents.getMany.queryOptions(),
+        trpc.agents.create.mutationOptions({ // we already defined trpc - it is the createTRPCContext.
+            // agents is the route we defined _app.ts, which is the agentsRouter, and create is the procedure we defined in the agentsRouter.
+            onSuccess: async () => {
+                await queryClient.invalidateQueries(
+                    trpc.agents.getMany.queryOptions(), // getMany procedure does not require a parameter, so we can call it without any arguments (queryOptions)
                 )
 
                 if(initialValues?.id) {
-                    queryClient.invalidateQueries(
+                    await queryClient.invalidateQueries(
                         trpc.agents.getOne.queryOptions({id: initialValues.id})
                     )
                 }
+
+                onSuccess?.(); // if onSuccess is defined, we call it.
             },
-            onError: () => {}
+            onError: (error) => {
+                toast.error(error.message);
+                //todo: check if error code is forbidden, then redirect to login page.
+            }
         })
 
     )
@@ -68,7 +76,7 @@ export const AgentForm = ({
 
     const onSubmit = (values: z.infer<typeof agentsInsertSchema>) => {
 
-        if(!isEdit) {
+        if(isEdit) {
             console.log("update agent", values);
         }else {
             createAgent.mutate(values);

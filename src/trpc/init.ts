@@ -19,9 +19,9 @@ const t = initTRPC.create({
     // transformer: superjson,
 });
 // Base router and procedure helpers
-export const createTRPCRouter = t.router;
+export const createTRPCRouter = t.router; //creating TRPC router
 export const createCallerFactory = t.createCallerFactory;
-export const baseProcedure = t.procedure;
+export const baseProcedure = t.procedure; // base procedure for all routers
 
 export const protectedProcedure = baseProcedure.use(async ({ctx, next}) => {
     const session = await auth.api.getSession({
@@ -33,4 +33,6 @@ export const protectedProcedure = baseProcedure.use(async ({ctx, next}) => {
     }
 
     return next({ctx : {...ctx, auth: session}})
-})
+}) // protected procedure for validated users, base procedure before executing the next step (query or mutation) will "use" the async function to validate the user session.
+
+// ctx is the context basically --- createTRPCContext is a cache function that returns the userId, which is used in the protectedProcedure to validate the user session. In server.ts we will use this context to create the TRPC options proxy.
