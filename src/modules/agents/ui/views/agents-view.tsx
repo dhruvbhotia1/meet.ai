@@ -5,29 +5,22 @@ import {useSuspenseQuery} from "@tanstack/react-query"
 import {useTRPC} from "@/trpc/client";
 import LoadingState from "@/components/loading-state";
 import ErrorState from "@/components/error-state";
-import {ResponsiveDialog} from "@/components/responsive-dialog";
-import {Button} from "@/components/ui/button";
+import {DataTable} from "@/modules/agents/ui/components/data-table";
+import {columns} from "@/modules/agents/ui/components/columns";
+
+
 
 const AgentsView = () => {
 
     const trpc = useTRPC();
-    const {data, isLoading, isError} = useSuspenseQuery(trpc.agents.getMany.queryOptions());
+    const {data} = useSuspenseQuery(trpc.agents.getMany.queryOptions());
 
-    if(isLoading) {
-        return (
-            <LoadingState title={'Loading Agents'} description={'This may take a few seconds'}/>
-        );
-    }
 
-    if(isError) {
-        return (
-           <ErrorState title={'Error'} description={'An error occurred'} />
-        );
-    }
+
 
     return (
-        <div>
-            {JSON.stringify(data, null, 2)}
+        <div className={'flex-1 pb-4 px-4 md:px-8 flex flex-col gap-y-4'}>
+            <DataTable data={data} columns={columns}/>
         </div>
     );
 };
