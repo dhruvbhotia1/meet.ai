@@ -1,16 +1,21 @@
 import React from 'react';
-import {baseProcedure, createTRPCRouter, protectedProcedure} from '@/trpc/init';
+import { createTRPCRouter, protectedProcedure} from '@/trpc/init';
 import {z} from 'zod';
 import { db } from '@/db';
 import {agents} from "@/db/schema";
+import {eq} from 'drizzle-orm';
 import {agentsInsertSchema} from "@/modules/agents/schema";
-import {eq} from "drizzle-orm";
+
+import {getTableColumns} from "drizzle-orm";
 
 
 export const agentsRouter = createTRPCRouter({
 
-    getOne: protectedProcedure.input(z.object({id: z.string()})).query(async ({input}) => {
-        const [existingAgent] = await db.select().from(agents).where(eq(agents.id, input.id));
+    getOne: protectedProcedure.input(z.object({id: z.string()})).query(async ({input, ctx}) => {
+        const [existingAgent] = await db.select({
+            ...getTableColumns(agents),
+
+        }).from(agents).where(eq(agents.id, input.id));
 
         await new Promise((resolve) => setTimeout(resolve, 5000));
 
